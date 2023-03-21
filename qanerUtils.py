@@ -89,7 +89,7 @@ def bioDatasetToSquad(dataset: List, mapper: Dict) -> List:
   return data
 
 
-def getBalancedData(data: List, positive_samples: int = 100, negative_samples: int = 0, seed: int = 42):
+def getBalancedData(data: List, positive_samples: int = 100, negative_samples: int = 0, seed: int = 42) -> List:
   """
     returns up to a specified number of positive and negative entries for each entity type
 
@@ -137,7 +137,7 @@ def getBalancedData(data: List, positive_samples: int = 100, negative_samples: i
   return data
 
 
-def toSquadJson(data: List):
+def toSquadJson(data: List) -> Dict:
   """
     Forms a dict in squad format
 
@@ -175,7 +175,20 @@ def toSquadJson(data: List):
   return data_json
 
 
-def squadToBio(contexts, questions, preds, mapper):
+def squadToBio(contexts: List, questions: List, preds: List, mapper: Dict) -> List:
+  """
+    convert squad model predictions to bio markup
+
+    Args:
+      contexts: A list of contexts
+      questions: A list of questions
+      preds: A list of (predicted_answers, start_ids, scores)
+      mapper: A dict mapping entities to questions
+
+    Returns:
+      instances: A list of bio markup for each
+  """
+
   q_to_l = {v: k for k, v in mapper.items()}
   step = len(mapper)
   instances = []
