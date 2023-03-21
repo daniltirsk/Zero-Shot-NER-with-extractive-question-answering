@@ -5,7 +5,7 @@ import json
 
 from typing import List, Tuple, Optional, Dict
 
-def bioToSquad(tokens: List[str], mapper: Dict, labels: Optional[List[str]]) -> List:
+def bioToSquad(tokens: List[str], mapper: Dict, labels: Optional[List[str]] = None) -> List:
     """
     converts bio labeled text into single span squad format
 
