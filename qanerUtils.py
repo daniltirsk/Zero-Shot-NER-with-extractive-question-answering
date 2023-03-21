@@ -73,7 +73,7 @@ def bioDatasetToSquad(dataset: List, mapper: Dict) -> List:
 
     Args:
       dataset: a list of (tokens, entities) pairs
-      mapper: mapper: Dict of entity:question pairs
+      mapper: Dict of entity:question pairs
 
     Returns:
       A list of ((context: str, question: str), (answer_text: List[str],answer_start: List[int]), entity_type: str)
@@ -137,6 +137,34 @@ def getBalancedData(data: List, positive_samples: int = 100, negative_samples: i
   return data
 
 
+def filterSingleSpan(datasetNer: List, mapper: Dict) -> List:
+  """
+    filter examples without any single span entities in it
+    Args:
+        datasetNer: a list of (tokens,entities) tuples
+        mapper: Dict of entity:question pairs
+
+    Returns:
+        data: a list of (tokens,entities) tuples
+  """
+
+  data = []
+  for pair in datasetNer:
+    counts = Counter([label for label in pair[1] if label.startswith('B')])
+    if len(counts) == 0:
+      continue
+
+    singleSpanEntities = [i[0][2:] for i in counts.items() if i[1] == 1]
+    singleSpanEntities = [i for i in singleSpanEntities if i in mapper]
+
+    if len(singleSpanEntities) == 0:
+      continue
+
+    data.append(pair)
+
+  return data
+
+
 def toSquadJson(data: List) -> Dict:
   """
     Forms a dict in squad format
@@ -183,7 +211,7 @@ def squadToBio(contexts: List, questions: List, preds: List, mapper: Dict) -> Li
       contexts: A list of contexts
       questions: A list of questions
       preds: A list of (predicted_answers, start_ids, scores)
-      mapper: A dict mapping entities to questions
+      mapper: Dict of entity:question pairs
 
     Returns:
       instances: A list of bio markup for each
